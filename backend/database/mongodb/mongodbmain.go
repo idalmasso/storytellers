@@ -1,10 +1,9 @@
-package storytellermongo
+package mongodb
 
 import (
 	"context"
 	"log"
 	"os"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,27 +15,22 @@ type MongoDatabase struct {
 	database          *mongo.Database
 }
 
-func (db *MongoDatabase) InitDB() error {
+func (db *MongoDatabase) InitDB(ctx context.Context) error {
 	// Database Config
 	clientOptions := options.Client().ApplyURI(os.Getenv("CONNECTION_STRING"))
 	client, err := mongo.NewClient(clientOptions)
 
-	//Set up a context required by mongo.Connect
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
-	//To close the connection at the end
-	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
 		return err
 	}
-	err = client.Ping(context.Background(), readpref.Primary())
+	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
 		return err
 	} else {
 		log.Println("Connected!")
 	}
-	db.database = client.Database(os.Getenv("POSTS_DB_NAME"))
+	db.database = client.Database(os.Getenv("STORIES_DB_NAME"))
 	db.setCollections()
 	return nil
 }
