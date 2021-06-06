@@ -19,7 +19,9 @@ func (db *MongoDatabase) InitDB(ctx context.Context) error {
 	// Database Config
 	clientOptions := options.Client().ApplyURI(os.Getenv("CONNECTION_STRING"))
 	client, err := mongo.NewClient(clientOptions)
-
+	if err!=nil{
+		return err
+	}
 	err = client.Connect(ctx)
 	if err != nil {
 		return err
