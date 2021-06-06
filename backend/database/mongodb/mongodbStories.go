@@ -8,6 +8,7 @@ import (
 	"github.com/idalmasso/storytellers/backend/common"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (db *MongoDatabase) AddStory(ctx context.Context, story common.Story) (common.Story, error) {
@@ -19,7 +20,7 @@ func (db *MongoDatabase) AddStory(ctx context.Context, story common.Story) (comm
 		story.ID = val.Hex()
 		return story, nil
 	}
-	return story, fmt.Errorf("Cannot get id from results")
+	return story, fmt.Errorf("cannot get id from results")
 }
 
 func (db *MongoDatabase) DeleteStory(ctx context.Context, id string) error {
@@ -42,12 +43,20 @@ func (db *MongoDatabase) UpdateStory(ctx context.Context, id string, storyUpdate
 	if err != nil {
 		return common.Story{}, fmt.Errorf("cannot covert id " + err.Error())
 	}
-	result := db.storiesCollection.FindOneAndReplace(ctx, bson.M{"_id": realId}, storyUpdated)
+	var optAfter options.FindOneAndReplaceOptions
+	
+	optAfter.SetReturnDocument(options.After)
+	result := db.storiesCollection.FindOneAndReplace(ctx, bson.M{"_id": realId}, storyUpdated,&optAfter )
 	if result.Err() != nil {
 		return common.Story{}, fmt.Errorf("Error, cannot update request " + result.Err().Error())
 	}
 
-	return common.Story{}, nil
+	var story common.Story
+	err = result.Decode(&story)
+	if err != nil {
+		return common.Story{}, fmt.Errorf("Error, cannot decode from database " + err.Error())
+	}
+	return story, nil
 }
 func (db *MongoDatabase) FindStory(ctx context.Context, id string) (common.Story, error) {
 	realId, err := primitive.ObjectIDFromHex(id)

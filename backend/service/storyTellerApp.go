@@ -64,8 +64,8 @@ func (app storyTellerApp) UpdateStory(ctx context.Context, id, user, title, text
 	if user == "" || title == "" {
 		return common.Story{}, fmt.Errorf("user or title empty is not valid")
 	}
-
-	return app.db.UpdateStory(ctx, id, common.Story{User: user, Title: title, Text: text})
+	
+	return app.db.UpdateStory(ctx, id, common.Story{ User: user, Title: title, Text: text})
 }
 func (app storyTellerApp) FindAllStories(ctx context.Context) ([]common.Story, error) {
 	return app.db.FindAllStories(ctx)
