@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/idalmasso/storytellers/backend/api"
 	"github.com/idalmasso/storytellers/backend/database/mongodb"
@@ -21,5 +22,5 @@ func main(){
 		log.Fatal("Error on service create: ",err)
 	}
 	srv :=  api.NewStoryServer(&app)
-	srv.Run()
+	srv.Run(os.Getenv("SERVER_PORT"))
 }

@@ -35,22 +35,22 @@ func (r *StoryServerRouter) init(){
   r.Router.Use(middleware.Recoverer)
 	r.Router.Use(middleware.Timeout(60 * time.Second))
 
-  r.Router.Route("/stories", func(router chi.Router) {
-    router.With(paginate).Get("/", r.listStories)                           // GET /stories
-    //r.With(paginate).Get("/{month}-{day}-{year}", listArticlesByDate) // GET /stories/01-16-2017
+  r.Router.Route("/api/stories", func(router chi.Router) {
+    router.With(paginate).Get("/", r.listStories)                           // GET /api/stories
+    //r.With(paginate).Get("/{month}-{day}-{year}", listArticlesByDate) // GET /api/stories/01-16-2017
 
-    router.Post("/", r.createStory)                                        // POST /articles
-    //r.Get("/search", searchArticles)                                  // GET /articles/search
+    router.Post("/", r.createStory)                                        // POST /api/articles
+    //r.Get("/search", searchArticles)                                  // GET /api/articles/search
 
     // Regexp url parameters:
-    //r.Get("/{articleSlug:[a-z-]+}", getArticleBySlug)                // GET /articles/home-is-toronto
+    //r.Get("/{articleSlug:[a-z-]+}", getArticleBySlug)                // GET /api/articles/home-is-toronto
 
     // Subrouters:
     router.Route("/{storyId}", func(router chi.Router) {
       router.Use(r.StoryCtx)
-      router.Get("/", r.getStory)                                          // GET /articles/123
-      router.Put("/", r.updateStory)                                       // PUT /articles/123
-      router.Delete("/", r.deleteStory)                                    // DELETE /articles/123
+      router.Get("/", r.getStory)                                          // GET /api/articles/123
+      router.Put("/", r.updateStory)                                       // PUT /api/articles/123
+      router.Delete("/", r.deleteStory)                                    // DELETE /api/articles/123
     })
   })
 

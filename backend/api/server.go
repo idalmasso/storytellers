@@ -12,9 +12,9 @@ type storyServer struct{
 	router router.StoryServerRouter
 }
 
-func (s storyServer)Run(){
+func (s storyServer)Run(port string){
 	
-  http.ListenAndServe(":3333", s.router.Router)
+  http.ListenAndServe(":"+port, s.router.Router)
 }
 
 func NewStoryServer(app types.StoryTellerAppInterface) storyServer{
